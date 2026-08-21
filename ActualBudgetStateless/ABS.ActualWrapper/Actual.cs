@@ -12,16 +12,7 @@ public class Actual
 
     public Actual(ConnectionInfo connectionInfo)
     {
-        var handler = new HttpClientHandler();
-        handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-        handler.ServerCertificateCustomValidationCallback =
-            (httpRequestMessage, cert, cetChain, policyErrors) => true;
-        
-        #if DEBUG
-        Api = new HttpClient(handler)
-        #else
         Api = new HttpClient()
-        #endif
         {
             BaseAddress = new Uri(
                 new Uri(connectionInfo.ApiUrl!),
