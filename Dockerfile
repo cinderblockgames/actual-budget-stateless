@@ -8,7 +8,7 @@ WORKDIR /app/ABS
 RUN dotnet publish -c Release -o out
 
 
-FROM mcr.microsoft.com/dotnet/runtime:10.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 
 WORKDIR /app
 COPY --from=build-env /app/ABS/out .
