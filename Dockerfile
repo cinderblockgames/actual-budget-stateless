@@ -16,9 +16,7 @@ COPY --from=build-env /app/ABS/out .
 RUN apt-get update && \
     apt-get install -y dumb-init
     
-
-# env variables go here
-
+ENV ASPNETCORE_URLS=http://+:5008
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD [ "dotnet", "/app/ABS.dll" ]
