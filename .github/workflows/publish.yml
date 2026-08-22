@@ -12,8 +12,9 @@ jobs:
       - name: Set output
         id: vars
         run: |
-          ref=${GITHUB_REF#refs/*/}
-          echo ::set-output name=tag::${ref#*_}
+          version=${GITHUB_REF#refs/*/}
+          echo ::set-output name=major::${version%%.*}
+          echo ::set-output name=minor::${version%.*}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -33,7 +34,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: cinderblockgames/actual-budget-stateless:${{ steps.vars.outputs.tag }}
+          tags: cinderblockgames/actual-budget-stateless:${{ steps.vars.outputs.major }},cinderblockgames/actual-budget-stateless:${{ steps.vars.outputs.minor }},cinderblockgames/actual-budget-stateless:latest
           
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
