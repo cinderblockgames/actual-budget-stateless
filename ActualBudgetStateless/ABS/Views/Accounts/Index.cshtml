@@ -1,0 +1,46 @@
+﻿@model AccountsViewModel
+
+@{
+    ViewData["Title"] = $"Accounts";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Accounts</h1>
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr class="table-primary">
+            <th scope="col">All accounts</th>
+            <th scope="col">@Model.AllAccountsTotal</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr class="table-info">
+            <th scope="col">On budget</th>
+            <th scope="col">@Model.OnBudgetAccountsTotal</th>
+        </tr>
+
+        @foreach (var account in Model.OnBudgetAccounts)
+        {
+            <tr>
+                <td>@account.Name</td>
+                <td>@account.WorkingBalance</td>
+            </tr>
+        }
+        
+        
+        <tr class="table-info">
+            <th scope="col">Off budget</th>
+            <th scope="col">@Model.OffBudgetAccountsTotal</th>
+        </tr>
+
+        @foreach (var account in Model.OffBudgetAccounts)
+        {
+            <tr>
+                <td>@account.Name</td>
+                <td>@account.WorkingBalance</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -26,7 +26,16 @@ public class Actual
 
     public async Task<MonthInfo> GetMonthInfo(int year, int month)
     {
-        return await Process<MonthInfo>(() => Api.GetAsync($"months/{year}-{month:00}"));
+        return await Process<MonthInfo>(() =>
+            Api.GetAsync($"months/{year}-{month:00}"
+        ));
+    }
+
+    public async Task<IEnumerable<Account>> GetAccounts()
+    {
+        return await Process<IEnumerable<Account>>(() =>
+            Api.GetAsync("accounts?include_balances=true&exclude_offbudget=false&exclude_closed=false"
+        ));
     }
     
     #region " Process "
