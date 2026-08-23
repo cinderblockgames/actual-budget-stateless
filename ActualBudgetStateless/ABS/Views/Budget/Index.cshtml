@@ -1,15 +1,20 @@
-﻿@using Microsoft.AspNetCore.Mvc.Routing
-@model MonthInfoViewModel
+﻿@model MonthInfoViewModel
 
 @{
-    ViewData["Title"] = $"{Model.Month.Display} ";
+    ViewData["Title"] = $"{Model.Month.Display}";
 }
 
 <div class="text-center">
     <h1 class="display-4">
-        <
+        @if (Model.PreviousMonth != null)
+        {
+            <a class="text-dark" style="text-decoration: none" href="../@Model.PreviousMonth.Year/@Model.PreviousMonth.Month">&lt;</a>
+        }
         @Model.Month.Display
-        >
+        @if (Model.NextMonth != null)
+        {
+            <a class="text-dark" style="text-decoration: none" href="../@Model.NextMonth.Year/@Model.NextMonth.Month">&gt;</a>
+        }
     </h1>
     <table class="table table-striped table-bordered">
         <thead>

@@ -24,6 +24,13 @@ public class Actual
     
     #endregion
 
+    public async Task<IEnumerable<string>> GetMonths()
+    {
+        return await Process<IEnumerable<string>>(() =>
+            Api.GetAsync("months"
+        ));
+    }
+    
     public async Task<MonthInfo> GetMonthInfo(int year, int month)
     {
         return await Process<MonthInfo>(() =>
