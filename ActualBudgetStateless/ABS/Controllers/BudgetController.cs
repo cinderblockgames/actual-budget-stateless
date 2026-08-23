@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ABS.ActualWrapper;
-using ABS.Models;
 using static ABS.Mapper.Mapper;
 
 namespace ABS.Controllers;
