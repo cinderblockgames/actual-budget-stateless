@@ -17,6 +17,7 @@ public static partial class Mapper
             Budgeted = ToDollars(input.Budgeted),
             Spent = ToDollars(input.Spent),
             Balance = ToDollars(input.Balance),
+            Received = ToDollars(input.Received),
             Carryover = input.Carryover
         };
     }

@@ -41,6 +41,20 @@
                 <td>@account.WorkingBalance</td>
             </tr>
         }
+        
+        
+        <tr class="table-info">
+            <th scope="col">Closed Accounts</th>
+            <th scope="col"></th>
+        </tr>
+
+        @foreach (var account in Model.ClosedAccounts)
+        {
+            <tr>
+                <td>@account.Name</td>
+                <td>@account.WorkingBalance</td>
+            </tr>
+        }
         </tbody>
     </table>
 </div>
