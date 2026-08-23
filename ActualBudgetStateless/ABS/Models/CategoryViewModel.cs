@@ -10,5 +10,6 @@ public class CategoryViewModel
     public string Budgeted { get; set; }
     public string Spent { get; set; }
     public string Balance { get; set; }
+    public string Received { get; set; }
     public bool Carryover { get; set; }
 }

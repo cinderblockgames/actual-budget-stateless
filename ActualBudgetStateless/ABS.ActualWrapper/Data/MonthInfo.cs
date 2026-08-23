@@ -11,6 +11,6 @@ public class MonthInfo
     public decimal FromLastMonth { get; set; }
     public decimal TotalIncome { get; set; }
     public decimal TotalSpent { get; set; }
-    public decimal TotalBalances { get; set; }
+    public decimal TotalBalance { get; set; }
     public IEnumerable<CategoryGroup> CategoryGroups { get; set; }
 }

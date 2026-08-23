@@ -15,12 +15,13 @@ public static partial class Mapper
             IncomeAvailable = ToDollars(input.IncomeAvailable),
             LastMonthOverspent = ToDollars(input.LastMonthOverspent),
             ForNextMonth = ToDollars(input.ForNextMonth),
-            TotalBudgeted = ToDollars(input.TotalBudgeted),
+            // Budgeted comes in negative to show it's spending money
+            TotalBudgeted = ToDollars(-1*input.TotalBudgeted),
             ToBudget = ToDollars(input.ToBudget),
             FromLastMonth = ToDollars(input.FromLastMonth),
             TotalIncome = ToDollars(input.TotalIncome),
             TotalSpent = ToDollars(input.TotalSpent),
-            TotalBalances = ToDollars(input.TotalBalances),
+            TotalBalance = ToDollars(input.TotalBalance),
             CategoryGroups = Map(input.CategoryGroups)
         };
     }

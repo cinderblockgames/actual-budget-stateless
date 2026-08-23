@@ -12,6 +12,6 @@ public class MonthInfoViewModel
     public string FromLastMonth { get; set; }
     public string TotalIncome { get; set; }
     public string TotalSpent { get; set; }
-    public string TotalBalances { get; set; }
+    public string TotalBalance { get; set; }
     public IEnumerable<CategoryGroupViewModel> CategoryGroups { get; set; }
 }
