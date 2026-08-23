@@ -7,11 +7,11 @@ public static partial class Mapper
 {
     public static MonthInfoViewModel Map(MonthInfo input)
     {
-        var split = SplitMonth(input.Month);
         return new MonthInfoViewModel
         {
-            Month = split.Month,
-            Year = split.Year,
+            Month = new MonthViewModel(input.Month),
+            NextMonth = new MonthViewModel(input.Month, +1),
+            PreviousMonth = new MonthViewModel(input.Month, -1),
             IncomeAvailable = ToDollars(input.IncomeAvailable),
             LastMonthOverspent = ToDollars(input.LastMonthOverspent),
             ForNextMonth = ToDollars(input.ForNextMonth),
@@ -24,11 +24,5 @@ public static partial class Mapper
             TotalBalance = ToDollars(input.TotalBalance),
             CategoryGroups = Map(input.CategoryGroups)
         };
-    }
-
-    private static (string Month, int Year) SplitMonth(string input)
-    {
-        var dt = DateTime.Parse(input);
-        return (dt.ToString("MMMM"), dt.Year);
     }
 }

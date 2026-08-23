@@ -2,8 +2,9 @@ namespace ABS.Models;
 
 public class MonthInfoViewModel
 {
-    public string Month { get; set; }
-    public int Year { get; set; }
+    public MonthViewModel Month { get; set; }
+    public MonthViewModel NextMonth { get; set; }
+    public MonthViewModel PreviousMonth { get; set; }
     public string IncomeAvailable { get; set; }
     public string LastMonthOverspent { get; set; }
     public string ForNextMonth { get; set; }

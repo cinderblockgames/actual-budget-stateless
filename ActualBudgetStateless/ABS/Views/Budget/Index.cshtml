@@ -1,11 +1,16 @@
-﻿@model MonthInfoViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Routing
+@model MonthInfoViewModel
 
 @{
-    ViewData["Title"] = $"{Model.Month} {Model.Year}";
+    ViewData["Title"] = $"{Model.Month.Display} ";
 }
 
 <div class="text-center">
-    <h1 class="display-4">< @Model.Month @Model.Year ></h1>
+    <h1 class="display-4">
+        <
+        @Model.Month.Display
+        >
+    </h1>
     <table class="table table-striped table-bordered">
         <thead>
         <tr class="table-primary">
@@ -78,3 +83,10 @@
         </tbody>
     </table>
 </div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        localStorage.setItem("month", "@Model.Month.Joined");
+    </script>
+}
