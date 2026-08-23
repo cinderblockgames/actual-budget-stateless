@@ -1,80 +1,12 @@
 ﻿@model MonthInfoViewModel
 
 @{
-    ViewData["Title"] = $"{Model.Month} {Model.Year}";
+    ViewData["Title"] = $"Actual Budget (Stateless)";
 }
 
-<div class="text-center">
-    <h1 class="display-4">@Model.Month @Model.Year</h1>
-    <table class="table table-striped table-bordered">
-        <thead>
-        <tr class="table-primary">
-            <th scope="col">
-                @(Model.ToBudget.StartsWith("-") ? "Overbudgeted" : "To Budget")
-                <br/>
-                @Model.ToBudget
-            </th>
-            <th scope="col">
-                Budgeted
-                <br/>
-                @Model.TotalBudgeted
-            </th>
-            <th scope="col">
-                Spent
-                <br/>
-                @Model.TotalSpent
-            </th>
-            <th scope="col">
-                Balance
-                <br/>
-                @Model.TotalBalance
-            </th>
-        </tr>
-        </thead>
+@section Scripts
+{
+    <script type="text/javascript">
         
-        <tbody>
-        @foreach (var group in Model.CategoryGroups.Where(cg => !cg.Income))
-        {
-            <tr class="table-info">
-                <th scope="col">@group.Name</th>
-                <th scope="col">@group.Budgeted</th>
-                <th scope="col">@group.Spent</th>
-                <th scope="col">@group.Balance</th>
-            </tr>
-
-            @foreach (var category in group.Categories)
-            {
-                <tr>
-                    <td>@category.Name</td>
-                    <td>@category.Budgeted</td>
-                    <td>@category.Spent</td>
-                    <td>@category.Balance</td>
-                </tr>
-            }
-        }
-        
-        <tr>
-            <td colspan="4" style="height:40px"></td>
-        </tr>
-        @foreach (var group in Model.CategoryGroups.Where(cg => cg.Income))
-        {
-            <tr class="table-primary">
-                <th scope="col">@group.Name</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col">@Model.TotalIncome</th>
-            </tr>
-
-            @foreach (var category in group.Categories)
-            {
-                <tr>
-                    <td>@category.Name</td>
-                    <td></td>
-                    <td></td>
-                    <td>@category.Received</td>
-                </tr>
-            }
-        }
-        </tbody>
-    </table>
-</div>
+    </script>
+}
