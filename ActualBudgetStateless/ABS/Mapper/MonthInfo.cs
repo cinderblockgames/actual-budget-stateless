@@ -12,6 +12,7 @@ public static partial class Mapper
             Month = new MonthViewModel(input.Month),
             NextMonth = new MonthViewModel(input.Month, +1),
             PreviousMonth = new MonthViewModel(input.Month, -1),
+            IsCurrentMonth = input.Month == $"{DateTime.Now.Year}-{DateTime.Now.Month:00}",
             IncomeAvailable = ToDollars(input.IncomeAvailable),
             LastMonthOverspent = ToDollars(input.LastMonthOverspent),
             ForNextMonth = ToDollars(input.ForNextMonth),
