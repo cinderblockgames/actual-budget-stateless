@@ -17,7 +17,7 @@
         }
         @if (!Model.IsCurrentMonth)
         {
-            <a class="text-dark" style="text-decoration: none" href="../@DateTime.Now.Year/@DateTime.Now.Month">🗓️</a>
+            <a class="text-dark" style="text-decoration: none" href="../@DateTime.Now.Year/@DateTime.Now.Month.ToString("00")">🗓️</a>
         }
     </h1>
     <table class="table table-striped table-bordered">

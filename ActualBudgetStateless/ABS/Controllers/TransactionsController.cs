@@ -93,18 +93,18 @@ public class TransactionsController : Controller
     {
         if (page < 1)
         {
-            return View(EMPTY);
+            return Json(EMPTY);
         }
 
         var transactions = await GetTransactions(retriever(page));
 
-        if (transactions == null ||
-            (page > 1 && !transactions.Any()))
+        if (transactions?.Any() != true)
         {
-            return View(EMPTY);
+            return page > 1 ? Json(EMPTY) : View(EMPTY);
         }
 
-        return View(MapTransactions(transactions));
+        var mapped = MapTransactions(transactions);
+        return page > 1 ? Json(mapped) : View(mapped);
     }
 
     private async Task<IEnumerable<Transaction>> GetTransactions(Task<IEnumerable<Transaction>> retriever)
@@ -132,9 +132,12 @@ public class TransactionsController : Controller
         var mapped = Map(transactions);
         foreach (var transaction in mapped)
         {
-            transaction.Account = accountMap[transaction.AccountId];
-            transaction.Category = categoryMap[transaction.CategoryId];
-            transaction.Payee = payeeMap[transaction.PayeeId];
+            if (transaction.AccountId != null)
+                transaction.Account = accountMap[transaction.AccountId];
+            if (transaction.CategoryId != null)
+                transaction.Category = categoryMap[transaction.CategoryId];
+            if (transaction.PayeeId != null)
+                transaction.Payee = payeeMap[transaction.PayeeId];
         }
 
         return mapped;
