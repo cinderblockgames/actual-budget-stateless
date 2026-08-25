@@ -10,7 +10,8 @@ public class TransactionViewModel
     public string? Account { get; set; }
     public string? CategoryId { get; set; }
     public string? Category { get; set; }
-    public string? Amount { get; set; }
+    public string? Payment { get; set; }
+    public string? Deposit { get; set; }
     public string? PayeeId { get; set; }
     public string? Payee { get; set; }
     public string? Notes { get; set; }

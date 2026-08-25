@@ -1,0 +1,40 @@
+﻿@model IEnumerable<TransactionViewModel>
+
+@{
+    ViewData["Title"] = "All Transactions";
+}
+
+<div class="text-center">
+    <h1 class="display-4">All Accounts</h1>
+    <h2 class="display-6">balance goes here</h2>
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr class="table-primary">
+            <th scope="col">Date</th>
+            <th scope="col">Account</th>
+            <th scope="col">Payee</th>
+            <th scope="col">Notes</th>
+            <th scope="col">Category</th>
+            <th scope="col">Payment</th>
+            <th scope="col">Deposit</th>
+            <th scope="col">✓</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        @foreach (var transaction in Model)
+        {
+            <tr>
+                <td>@transaction.Date</td>
+                <td>@transaction.Account</td>
+                <td>@transaction.Payee</td>
+                <td>@transaction.Notes</td>
+                <td>@transaction.Category</td>
+                <td>@transaction.Payment</td>
+                <td>@transaction.Deposit</td>
+                <td>@(transaction.Cleared ? "✓" : "")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

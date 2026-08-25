@@ -103,7 +103,7 @@ public class TransactionsController : Controller
             return page > 1 ? Json(EMPTY) : View(EMPTY);
         }
 
-        var mapped = MapTransactions(transactions);
+        var mapped = await MapTransactions(transactions);
         return page > 1 ? Json(mapped) : View(mapped);
     }
 
@@ -128,8 +128,8 @@ public class TransactionsController : Controller
         var payeeMap = (await _payees.GetValue()).ToDictionary(
             p => p.Id,
             p => p.Name);
-        
-        var mapped = Map(transactions);
+
+        var mapped = Map(transactions).ToArray(); // Needed so the below sticks.
         foreach (var transaction in mapped)
         {
             if (transaction.AccountId != null)
