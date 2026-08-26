@@ -4,7 +4,7 @@
     ViewData["Title"] = "All Transactions";
 }
 
-<div class="text-center">
+<div class="text-center" style="max-width: 100%">
     <h1 class="display-4">All Accounts</h1>
     <h2 class="display-6">balance goes here</h2>
     <table class="table table-striped table-bordered">
@@ -25,14 +25,14 @@
         @foreach (var transaction in Model)
         {
             <tr>
-                <td>@transaction.Date</td>
-                <td>@transaction.Account</td>
+                <td class="nowrap">@transaction.Date</td>
+                <td class="nowrap">@transaction.Account</td>
                 <td>@transaction.Payee</td>
                 <td>@transaction.Notes</td>
-                <td>@transaction.Category</td>
-                <td>@transaction.Payment</td>
-                <td>@transaction.Deposit</td>
-                <td>@(transaction.Cleared ? "✓" : "")</td>
+                <td class="nowrap">@transaction.Category</td>
+                <td class="nowrap">@transaction.Payment</td>
+                <td class="nowrap">@transaction.Deposit</td>
+                <td class="nowrap">@(transaction.Cleared ? "✓" : "")</td>
             </tr>
         }
         </tbody>
