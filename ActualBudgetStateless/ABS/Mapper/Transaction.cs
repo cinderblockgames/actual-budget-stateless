@@ -15,6 +15,7 @@ public static partial class Mapper
             ParentId = input.ParentId,
             AccountId = input.Account,
             CategoryId = input.Category,
+            Amount = ToDollars(input.Amount),
             Payment = input.Amount <= 0 ? ToDollars(-1*input.Amount) : null,
             Deposit = input.Amount > 0 ? ToDollars(input.Amount) : null,
             PayeeId = input.Payee,

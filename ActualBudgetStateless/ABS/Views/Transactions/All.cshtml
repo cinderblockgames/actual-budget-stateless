@@ -15,8 +15,9 @@
             <th scope="col">Payee</th>
             <th scope="col">Notes</th>
             <th scope="col">Category</th>
-            <th scope="col">Payment</th>
-            <th scope="col">Deposit</th>
+            <th scope="col" class="d-table-cell d-xl-none">Amount</th>
+            <th scope="col" class="d-none d-xl-table-cell">Payment</th>
+            <th scope="col" class="d-none d-xl-table-cell">Deposit</th>
             <th scope="col">✓</th>
         </tr>
         </thead>
@@ -30,8 +31,9 @@
                 <td>@transaction.Payee</td>
                 <td>@transaction.Notes</td>
                 <td class="nowrap">@transaction.Category</td>
-                <td class="nowrap">@transaction.Payment</td>
-                <td class="nowrap">@transaction.Deposit</td>
+                <td class="nowrap d-table-cell d-xl-none">@transaction.Amount</td>
+                <td class="nowrap d-none d-xl-table-cell">@transaction.Payment</td>
+                <td class="nowrap d-none d-xl-table-cell">@transaction.Deposit</td>
                 <td class="nowrap">@(transaction.Cleared ? "✓" : "")</td>
             </tr>
         }
