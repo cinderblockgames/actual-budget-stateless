@@ -15,7 +15,9 @@ public class TransactionViewModel
     public string? Deposit { get; set; }
     public string? PayeeId { get; set; }
     public string? Payee { get; set; }
+    public string? PayeeTruncated { get; set; }
     public string? Notes { get; set; }
+    public string? NotesTruncated { get; set; }
     public string Date { get; set; }
     public bool Cleared { get; set; }
     public bool Reconciled { get; set; }

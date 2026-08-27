@@ -11,4 +11,15 @@ public static partial class Mapper
 
         return null;
     }
+
+    public static string? Truncate(string? input)
+    {
+        // This should probably be handled with stylesheets, honestly.
+        if (input?.Length > 22)
+        {
+            return $"{input[..20]}…";
+        }
+
+        return input;
+    }
 }

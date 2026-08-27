@@ -138,6 +138,8 @@ public class TransactionsController : Controller
                 transaction.Category = categoryMap[transaction.CategoryId];
             if (transaction.PayeeId != null)
                 transaction.Payee = payeeMap[transaction.PayeeId];
+            transaction.PayeeTruncated = Truncate(transaction.Payee);
+            transaction.NotesTruncated = Truncate(transaction.Notes);
         }
 
         return mapped;
