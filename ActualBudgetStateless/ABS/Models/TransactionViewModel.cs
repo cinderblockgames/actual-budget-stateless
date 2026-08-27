@@ -2,18 +2,18 @@ namespace ABS.Models;
 
 public class TransactionViewModel
 {
-    public string Id { get; set; }
+    public Guid Id { get; set; }
     public bool Parent { get; set; }
     public bool Child { get; set; }
-    public string? ParentId { get; set; }
-    public string? AccountId { get; set; }
-    public string? Account { get; set; }
-    public string? CategoryId { get; set; }
+    public Guid? ParentId { get; set; }
+    public Guid AccountId { get; set; }
+    public string Account { get; set; }
+    public Guid? CategoryId { get; set; }
     public string? Category { get; set; }
     public string? Amount { get; set; }
     public string? Payment { get; set; }
     public string? Deposit { get; set; }
-    public string? PayeeId { get; set; }
+    public Guid? PayeeId { get; set; }
     public string? Payee { get; set; }
     public string? PayeeTruncated { get; set; }
     public string? Notes { get; set; }

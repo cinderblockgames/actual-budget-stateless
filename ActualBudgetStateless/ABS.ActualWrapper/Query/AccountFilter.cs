@@ -1,6 +1,6 @@
 namespace ABS.ActualWrapper.Query;
 
-public class AccountFilter(string account)
+public class AccountFilter(Guid account)
 {
-    public string Account { get; set; } = account;
+    public Guid Account { get; set; } = account;
 }

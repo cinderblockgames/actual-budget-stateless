@@ -60,19 +60,19 @@ public class Actual
         );
     }
 
-    public async Task<IEnumerable<Transaction>> GetTransactions(string accountId, int page)
+    public async Task<IEnumerable<Transaction>> GetTransactions(Guid accountId, int page)
     {
         return await Process<IEnumerable<Transaction>>(() =>
             Api.GetAsync($"accounts/{accountId}/transactions?since_date=1970-01-01&limit=50&page={page}")
         );
     }
 
-    public async Task<IEnumerable<Transaction>> GetTransactions(IEnumerable<string> accountIds, int page)
+    public async Task<IEnumerable<Transaction>> GetTransactions(IEnumerable<Guid> accountIds, int page)
     {
         return await ProcessTransactionsRequest(new Filter(accountIds), page);
     }
 
-    public async Task<IEnumerable<Transaction>> GetUncategorizedTransactions(IEnumerable<string> accountIds, int page)
+    public async Task<IEnumerable<Transaction>> GetUncategorizedTransactions(IEnumerable<Guid> accountIds, int page)
     {
         return await ProcessTransactionsRequest(new UncategorizedFilter(accountIds), page);
     }

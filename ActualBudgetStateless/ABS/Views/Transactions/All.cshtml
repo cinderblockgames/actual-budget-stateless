@@ -1,42 +1,10 @@
-﻿@model IEnumerable<TransactionViewModel>
+﻿@model TransactionsViewModel
 
 @{
-    ViewData["Title"] = "All Transactions";
+    ViewData["Title"] = Model.Context;
 }
 
 <div class="text-center" style="max-width: 100%">
-    <h1 class="display-4">All Accounts</h1>
-    <h2 class="display-6">balance goes here</h2>
-    <table class="table table-striped table-bordered">
-        <thead>
-        <tr class="table-primary">
-            <th scope="col">Date</th>
-            <th scope="col">Account</th>
-            <th scope="col">Payee</th>
-            <th scope="col">Notes</th>
-            <th scope="col">Category</th>
-            <th scope="col" class="d-table-cell d-xl-none">Amount</th>
-            <th scope="col" class="d-none d-xl-table-cell">Payment</th>
-            <th scope="col" class="d-none d-xl-table-cell">Deposit</th>
-            <th scope="col">✓</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        @foreach (var transaction in Model)
-        {
-            <tr>
-                <td class="nowrap">@transaction.Date</td>
-                <td class="nowrap">@transaction.Account</td>
-                <td>@transaction.PayeeTruncated</td>
-                <td>@transaction.NotesTruncated</td>
-                <td class="nowrap">@transaction.Category</td>
-                <td class="nowrap d-table-cell d-xl-none">@transaction.Amount</td>
-                <td class="nowrap d-none d-xl-table-cell">@transaction.Payment</td>
-                <td class="nowrap d-none d-xl-table-cell">@transaction.Deposit</td>
-                <td class="nowrap">@(transaction.Cleared ? "✓" : "")</td>
-            </tr>
-        }
-        </tbody>
-    </table>
+    <h1 class="display-4">@Model.Context</h1>
+    <partial name="_Transactions" model="Model.Transactions" />
 </div>

@@ -2,14 +2,14 @@ namespace ABS.ActualWrapper.Data;
 
 public class Transaction
 {
-    public string Id { get; set; }
+    public Guid Id { get; set; }
     public bool Is_Parent { get; set; }
     public bool Is_Child { get; set; }
-    public string ParentId { get; set; }
-    public string Account { get; set; }
-    public string Category { get; set; }
+    public Guid? ParentId { get; set; }
+    public Guid Account { get; set; }
+    public Guid? Category { get; set; }
     public decimal? Amount { get; set; }
-    public string Payee { get; set; }
+    public Guid? Payee { get; set; }
     public string Notes { get; set; }
     public string Date { get; set; }
     public string Imported_Id { get; set; }

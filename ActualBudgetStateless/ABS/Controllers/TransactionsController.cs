@@ -5,6 +5,8 @@ using ABS.Configuration;
 using ABS.Models;
 using static ABS.Mapper.Mapper;
 
+namespace ABS.Controllers;
+
 public class TransactionsController : Controller
 {
     
@@ -29,11 +31,17 @@ public class TransactionsController : Controller
     
     [Route("transactions/account/{accountId}")]
     [Route("transactions/account/{accountId}/{page}")]
-    public async Task<IActionResult> Account(string accountId, int page = 1)
+    public async Task<IActionResult> Account(Guid accountId, int page = 1)
     {
         return await Process(
             pg => _actual.GetTransactions(accountId, pg),
-            page);
+            page,
+            () =>
+            {
+                var accounts = _accounts.GetValue().GetAwaiter().GetResult(); // Already cached.
+                var account = accounts.SingleOrDefault(acct => acct.Id == accountId);
+                return account?.Name;
+            });
     }
     
     [Route("transactions/uncategorized")]
@@ -45,7 +53,8 @@ public class TransactionsController : Controller
             .Select(acct => acct.Id);
         return await Process(
             pg => _actual.GetUncategorizedTransactions(accountIds, pg),
-            page);
+            page,
+            () => "Uncategorized Transactions");
     }
 
     [Route("transactions")]
@@ -54,7 +63,8 @@ public class TransactionsController : Controller
     {
         return await ProcessAccountsSubset(
             acct => !acct.Closed,
-            page);
+            page,
+            () => "All Accounts");
     }
     
     [Route("transactions/onbudget")]
@@ -63,7 +73,8 @@ public class TransactionsController : Controller
     {
         return await ProcessAccountsSubset(
             acct => !acct.Closed && !acct.OffBudget,
-            page);
+            page,
+            () => "On Budget");
     }
     
     [Route("transactions/offbudget")]
@@ -72,24 +83,32 @@ public class TransactionsController : Controller
     {
         return await ProcessAccountsSubset(
             acct => !acct.Closed && acct.OffBudget,
-            page);
+            page,
+            () => "Off Budget");
     }
     
     #region " Process "
 
-    private async Task<IActionResult> ProcessAccountsSubset(Func<Account, bool> selector, int page)
+    private async Task<IActionResult> ProcessAccountsSubset(
+        Func<Account, bool> selector,
+        int page,
+        Func<string?> contextRetriever)
     {
         var accountIds = (await _accounts.GetValue())
             .Where(selector)
             .Select(acct => acct.Id);
         return await Process(
             pg => _actual.GetTransactions(accountIds, pg),
-            page);
+            page,
+            contextRetriever);
     }
 
     private static readonly IEnumerable<TransactionViewModel> EMPTY =
         Enumerable.Empty<TransactionViewModel>();
-    private async Task<IActionResult> Process(Func<int, Task<IEnumerable<Transaction>>> retriever, int page)
+    private async Task<IActionResult> Process(
+        Func<int, Task<IEnumerable<Transaction>>> retriever,
+        int page,
+        Func<string?> contextRetriever)
     {
         if (page < 1)
         {
@@ -97,14 +116,33 @@ public class TransactionsController : Controller
         }
 
         var transactions = await GetTransactions(retriever(page));
-
+        var context = contextRetriever();
+        
         if (transactions?.Any() != true)
         {
-            return page > 1 ? Json(EMPTY) : View(EMPTY);
+            return ViewOrJson(EMPTY, page, contextRetriever);
         }
 
         var mapped = await MapTransactions(transactions);
-        return page > 1 ? Json(mapped) : View(mapped);
+        return ViewOrJson(mapped, page, contextRetriever);
+    }
+
+    private IActionResult ViewOrJson(
+        IEnumerable<TransactionViewModel> transactions,
+        int page,
+        Func<string> contextRetriever)
+    {
+        if (page > 1)
+        {
+            return Json(transactions);
+        }
+
+        var vm = new TransactionsViewModel
+        {
+            Transactions = transactions,
+            Context = contextRetriever()
+        };
+        return View(vm);
     }
 
     private async Task<IEnumerable<Transaction>> GetTransactions(Task<IEnumerable<Transaction>> retriever)
@@ -132,12 +170,11 @@ public class TransactionsController : Controller
         var mapped = Map(transactions).ToArray(); // Needed so the below sticks.
         foreach (var transaction in mapped)
         {
-            if (transaction.AccountId != null)
-                transaction.Account = accountMap[transaction.AccountId];
-            if (transaction.CategoryId != null)
-                transaction.Category = categoryMap[transaction.CategoryId];
-            if (transaction.PayeeId != null)
-                transaction.Payee = payeeMap[transaction.PayeeId];
+            transaction.Account = accountMap[transaction.AccountId];
+            if (transaction.CategoryId.HasValue)
+                transaction.Category = categoryMap[transaction.CategoryId.Value];
+            if (transaction.PayeeId.HasValue)
+                transaction.Payee = payeeMap[transaction.PayeeId.Value];
             transaction.PayeeTruncated = Truncate(transaction.Payee);
             transaction.NotesTruncated = Truncate(transaction.Notes);
         }
