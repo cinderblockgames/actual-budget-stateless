@@ -33,3 +33,7 @@ body {
 .nowrap {
   white-space: nowrap;
 }
+
+[data-href] {
+  cursor: pointer;
+}
