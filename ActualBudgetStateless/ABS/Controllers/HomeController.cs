@@ -4,7 +4,7 @@ using ABS.Models;
 
 namespace ABS.Controllers;
 
-public class HomeController() : Controller
+public class HomeController : Controller
 {
     public IActionResult Index()
     {

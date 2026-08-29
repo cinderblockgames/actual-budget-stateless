@@ -1,22 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
 using ABS.ActualWrapper;
+using ABS.Configuration;
 using static ABS.Mapper.Mapper;
 
 namespace ABS.Controllers;
 
-public class BudgetController(Actual actual) : Controller
+public class BudgetController : Controller
 {
-    [Route("Budget/{year}/{month}")]
+    
+    #region " Constructor, Private Properties "
+    
+    private readonly Actual _actual;
+    private readonly Cache<IEnumerable<string>> _months;
+    
+    public BudgetController(Actual actual)
+    {
+        _actual = actual;
+        _months = new(_actual.GetMonths, TimeSpan.FromHours(1));
+    }
+    
+    #endregion
+    
+    [Route("budget/{year}/{month}")]
     public async Task<IActionResult> Index(int year, int month)
     {
-        var summary = await actual.GetMonthInfo(year, month);
+        var summary = await _actual.GetMonthInfo(year, month);
         if (summary == null)
         {
-            return RedirectToAction("Index", new { year = DateTime.Now.Year, month = DateTime.Now.Month });
+            return RedirectToAction(nameof(Index), new { year = DateTime.Now.Year, month = DateTime.Now.Month });
         }
 
         var mapped = Map(summary);
-        var available = await GetMonths();
+        var available = await _months.GetValue();
 
         if (!available.Contains(mapped.PreviousMonth.Joined))
         {
@@ -30,34 +45,4 @@ public class BudgetController(Actual actual) : Controller
 
         return View(mapped);
     }
-
-    #region " GetMonths "
-
-    private static IEnumerable<string> _months;
-    private static DateTime _expires;
-    private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
-
-    private async Task<IEnumerable<string>> GetMonths()
-    {
-        if (_months == null || DateTime.Now > _expires)
-        {
-            await _semaphore.WaitAsync();
-            try
-            {
-                if (_months == null || DateTime.Now > _expires)
-                {
-                    _months = await actual.GetMonths();
-                    _expires = DateTime.Now.AddHours(1); // Cache for one hour.
-                }
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
-        }
-
-        return _months;
-    }
-
-    #endregion
 }
