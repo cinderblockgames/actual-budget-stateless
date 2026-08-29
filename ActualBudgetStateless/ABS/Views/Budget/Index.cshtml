@@ -46,16 +46,18 @@
         </tr>
         </thead>
         
-        <tbody>
         @foreach (var group in Model.CategoryGroups.Where(cg => !cg.Income))
         {
-            <tr class="table-info">
+            var id = group.Name.Replace(' ', '-');
+            
+            <tr class="table-info" data-collapse="#@id">
                 <th scope="col">@group.Name</th>
                 <th scope="col">@group.Budgeted</th>
                 <th scope="col">@group.Spent</th>
                 <th scope="col">@group.Balance</th>
             </tr>
-
+            
+            <tbody id="@id">
             @foreach (var category in group.Categories)
             {
                 <tr>
@@ -65,6 +67,7 @@
                     <td>@category.Balance</td>
                 </tr>
             }
+            </tbody>
         }
         
         <tr>
@@ -72,13 +75,16 @@
         </tr>
         @foreach (var group in Model.CategoryGroups.Where(cg => cg.Income))
         {
-            <tr class="table-primary">
+            var id = group.Name.Replace(' ', '-');
+            
+            <tr class="table-primary" data-collapse="#@id">
                 <th scope="col">@group.Name</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
                 <th scope="col">@Model.TotalIncome</th>
             </tr>
-
+            
+            <tbody id="@id">
             @foreach (var category in group.Categories)
             {
                 <tr>
@@ -88,14 +94,35 @@
                     <td>@category.Received</td>
                 </tr>
             }
+            </tbody>
         }
-        </tbody>
     </table>
 </div>
 
 @section Scripts
 {
     <script type="text/javascript">
-        localStorage.setItem("month", "@Model.Month.Joined");
+        $(function() {
+            localStorage.setItem("month", "@Model.Month.Joined");
+
+            const collapsed = (localStorage.getItem('collapsed') || '').split('|');
+            $(collapsed).each((id, name) => $(name).hide());
+        });
+
+        $('[data-collapse]').on('click', function() {
+            // collapse the target
+            const id = $(this).data('collapse');
+            $(id).toggle();
+
+            // store for future
+            const collapsed = localStorage.getItem('collapsed');
+            let newCollapsed = collapsed ? collapsed.split('|') : [];
+            if ($(id).is(':visible')) {
+                newCollapsed = newCollapsed.filter(e => e !== id);
+            } else {
+                newCollapsed.push(id);
+            }
+            localStorage.setItem('collapsed', newCollapsed.join('|'));
+        })
     </script>
 }

@@ -34,6 +34,7 @@ body {
   white-space: nowrap;
 }
 
-[data-href] {
+[data-href],
+[data-collapse] {
   cursor: pointer;
 }
