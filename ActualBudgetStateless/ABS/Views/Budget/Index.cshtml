@@ -64,7 +64,7 @@
                     <td>@category.Name</td>
                     <td>@category.Budgeted</td>
                     <td>@category.Spent</td>
-                    <td>@category.Balance</td>
+                    <td>@category.Balance @(@category.Carryover ? "→" : "")</td>
                 </tr>
             }
             </tbody>
