@@ -9,5 +9,5 @@ public class CategoryGroup
     public decimal Budgeted { get; set; }
     public decimal Spent { get; set; }
     public decimal Balance { get; set; }
-    public IEnumerable<Category> Categories { get; set; }
+    public Category[] Categories { get; set; }
 }

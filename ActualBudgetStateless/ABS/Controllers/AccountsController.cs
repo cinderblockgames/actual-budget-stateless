@@ -10,7 +10,7 @@ public class AccountsController(Actual actual) : Controller
 {
     public async Task<IActionResult> Index()
     {
-        var accounts = (await actual.GetAccounts()).ToArray();
+        var accounts = await actual.GetAccounts();
         
         var openAccounts = accounts.Where(acc => !acc.Closed).ToArray();
         var onBudgetAccounts = openAccounts.Where(acc => !acc.OffBudget).ToArray();
@@ -30,7 +30,7 @@ public class AccountsController(Actual actual) : Controller
         return View(vm);
     }
 
-    private string Sum(IEnumerable<Account> accounts)
+    private string Sum(Account[] accounts)
     {
         return ToDollars(accounts.Sum(acc => acc.WorkingBalance));
     }

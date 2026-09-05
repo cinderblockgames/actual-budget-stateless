@@ -42,3 +42,11 @@ main {
 [data-collapse] {
   cursor: pointer;
 }
+
+[data-toggle="tooltip"] {
+  cursor: default;
+}
+
+.tooltip-inner {
+  white-space: pre-wrap;
+}

@@ -20,5 +20,5 @@ public class Transaction
     public bool Reconciled { get; set; }
     public bool Tombostone { get; set; }
     public string Schedule { get; set; }
-    public IEnumerable<Transaction> SubTransactions { get; set; }
+    public Transaction[] SubTransactions { get; set; }
 }

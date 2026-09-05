@@ -19,8 +19,8 @@ public static partial class Mapper
         };
     }
 
-    public static IEnumerable<AccountViewModel> Map(IEnumerable<Account> input)
+    public static AccountViewModel[] Map(Account[] input)
     {
-        return input.Select(Map);
+        return input.Select(Map).ToArray();
     }
 }

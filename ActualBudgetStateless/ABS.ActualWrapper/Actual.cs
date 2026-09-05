@@ -25,23 +25,23 @@ public class Actual
     
     #endregion
 
-    public async Task<IEnumerable<CategoryStub>> GetCategories()
+    public async Task<CategoryStub[]> GetCategories()
     {
-        return await Process<IEnumerable<CategoryStub>>(() =>
+        return await Process<CategoryStub[]>(() =>
             Api.GetAsync("categories")
         );
     }
     
-    public async Task<IEnumerable<Payee>> GetPayees()
+    public async Task<Payee[]> GetPayees()
     {
-        return await Process<IEnumerable<Payee>>(() =>
+        return await Process<Payee[]>(() =>
             Api.GetAsync("payees")
         );
     }
     
-    public async Task<IEnumerable<string>> GetMonths()
+    public async Task<string[]> GetMonths()
     {
-        return await Process<IEnumerable<string>>(() =>
+        return await Process<string[]>(() =>
             Api.GetAsync("months")
         );
     }
@@ -53,33 +53,40 @@ public class Actual
         );
     }
 
-    public async Task<IEnumerable<Account>> GetAccounts()
+    public async Task<Account[]> GetAccounts()
     {
-        return await Process<IEnumerable<Account>>(() =>
+        return await Process<Account[]>(() =>
             Api.GetAsync("accounts?include_balances=true&exclude_offbudget=false&exclude_closed=false")
         );
     }
 
-    public async Task<IEnumerable<Transaction>> GetTransactions(Guid accountId, int page)
+    public async Task<Transaction[]> GetTransactions(Guid accountId, int page)
     {
-        return await Process<IEnumerable<Transaction>>(() =>
+        return await Process<Transaction[]>(() =>
             Api.GetAsync($"accounts/{accountId}/transactions?since_date=1970-01-01&limit=50&page={page}")
         );
     }
 
-    public async Task<IEnumerable<Transaction>> GetTransactions(IEnumerable<Guid> accountIds, int page)
+    public async Task<Transaction[]> GetTransactions(IEnumerable<Guid> accountIds, int page)
     {
         return await ProcessTransactionsRequest(new Filter(accountIds), page);
     }
 
-    public async Task<IEnumerable<Transaction>> GetUncategorizedTransactions(IEnumerable<Guid> accountIds, int page)
+    public async Task<Transaction[]> GetUncategorizedTransactions(IEnumerable<Guid> accountIds, int page)
     {
         return await ProcessTransactionsRequest(new UncategorizedFilter(accountIds), page);
+    }
+
+    public async Task<string> GetNotesForCategory(Guid categoryId)
+    {
+        return await Process<string>(() =>
+            Api.GetAsync($"notes/category/{categoryId}")
+        );
     }
     
     #region " Process "
 
-    private async Task<IEnumerable<Transaction>> ProcessTransactionsRequest(Filter filter, int page)
+    private async Task<Transaction[]> ProcessTransactionsRequest(Filter filter, int page)
     {
         var request = new Wrapper
         {
@@ -93,7 +100,7 @@ public class Actual
             }
         };
 
-        return await Process<IEnumerable<Transaction>>(() =>
+        return await Process<Transaction[]>(() =>
             Api.PostAsJsonAsync("run-query", request)
         );
     }

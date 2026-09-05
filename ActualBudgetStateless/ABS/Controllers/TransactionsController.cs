@@ -13,9 +13,9 @@ public class TransactionsController : Controller
     #region " Constructor, Private Properties "
     
     private readonly Actual _actual;
-    private readonly Cache<IEnumerable<Account>> _accounts;
-    private readonly Cache<IEnumerable<CategoryStub>> _categories;
-    private readonly Cache<IEnumerable<Payee>> _payees;
+    private readonly Cache<Account[]> _accounts;
+    private readonly Cache<CategoryStub[]> _categories;
+    private readonly Cache<Payee[]> _payees;
     
     public TransactionsController(Actual actual)
     {
@@ -103,10 +103,9 @@ public class TransactionsController : Controller
             contextRetriever);
     }
 
-    private static readonly IEnumerable<TransactionViewModel> EMPTY =
-        Enumerable.Empty<TransactionViewModel>();
+    private static readonly TransactionViewModel[] EMPTY = [];
     private async Task<IActionResult> Process(
-        Func<int, Task<IEnumerable<Transaction>>> retriever,
+        Func<int, Task<Transaction[]>> retriever,
         int page,
         Func<string?> contextRetriever)
     {
@@ -128,7 +127,7 @@ public class TransactionsController : Controller
     }
 
     private IActionResult ViewOrJson(
-        IEnumerable<TransactionViewModel> transactions,
+        TransactionViewModel[] transactions,
         int page,
         Func<string> contextRetriever)
     {
@@ -145,7 +144,7 @@ public class TransactionsController : Controller
         return View(vm);
     }
 
-    private async Task<IEnumerable<Transaction>> GetTransactions(Task<IEnumerable<Transaction>> retriever)
+    private async Task<Transaction[]> GetTransactions(Task<Transaction[]> retriever)
     {
         // Pre-fill caches.
         var accountsTask = _accounts.GetValue();
@@ -155,7 +154,7 @@ public class TransactionsController : Controller
         return await retriever;
     }
 
-    private async Task<IEnumerable<TransactionViewModel>> MapTransactions(IEnumerable<Transaction> transactions)
+    private async Task<TransactionViewModel[]> MapTransactions(Transaction[] transactions)
     {
         var accountMap = (await _accounts.GetValue()).ToDictionary(
             a => a.Id,
@@ -167,7 +166,7 @@ public class TransactionsController : Controller
             p => p.Id,
             p => p.Name);
 
-        var mapped = Map(transactions).ToArray(); // Needed so the below sticks.
+        var mapped = Map(transactions) ?? [];
         foreach (var transaction in mapped)
         {
             transaction.Account = accountMap[transaction.AccountId];
