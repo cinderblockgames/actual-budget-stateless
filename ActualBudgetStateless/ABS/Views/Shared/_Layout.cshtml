@@ -25,6 +25,13 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Index">Accounts</a>
                     </li>
+                    
+                    @if (ViewBag.ActualLinkUrl != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="@ViewBag.ActualLinkUrl">Actual</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

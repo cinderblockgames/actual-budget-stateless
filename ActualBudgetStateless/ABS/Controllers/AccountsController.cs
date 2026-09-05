@@ -10,12 +10,12 @@ public class AccountsController(Actual actual) : Controller
 {
     public async Task<IActionResult> Index()
     {
-        var accounts = await actual.GetAccounts();
+        var accounts = (await actual.GetAccounts()).ToArray();
         
-        var openAccounts = accounts.Where(acc => !acc.Closed);
-        var onBudgetAccounts = openAccounts.Where(acc => !acc.OffBudget);
-        var offBudgetAccounts = openAccounts.Where(acc => acc.OffBudget);
-        var closedAccounts = accounts.Where(acc => acc.Closed);
+        var openAccounts = accounts.Where(acc => !acc.Closed).ToArray();
+        var onBudgetAccounts = openAccounts.Where(acc => !acc.OffBudget).ToArray();
+        var offBudgetAccounts = openAccounts.Where(acc => acc.OffBudget).ToArray();
+        var closedAccounts = accounts.Where(acc => acc.Closed).ToArray();
 
         var vm = new AccountsViewModel
         {
