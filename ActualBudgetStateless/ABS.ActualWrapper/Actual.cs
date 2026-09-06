@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using ABS.ActualWrapper.Data;
 using ABS.ActualWrapper.Query;
 
@@ -83,6 +84,39 @@ public class Actual
             Api.GetAsync($"notes/category/{categoryId}")
         );
     }
+
+    public async Task<Dictionary<Guid, GoalDefinition[]>> GetAutomationsForCategories()
+    {
+        var request = new Wrapper
+        {
+            AqlQuery = new AqlQuery
+            {
+                Table = "categories",
+                Select = ["id", "goal_def"]
+            }
+        };
+
+        var response = await Process<CategoryGoalDefinition[]>(() =>
+            Api.PostAsJsonAsync("run-query", request)
+        );
+        
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var dict = new Dictionary<Guid, GoalDefinition[]>();
+        foreach (var value in response)
+        {
+            if (value.Goal_Def != null)
+            {
+                var def = JsonSerializer.Deserialize<GoalDefinition[]>(value.Goal_Def, options);
+                dict[value.Id] = def!;
+            }
+        }
+
+        return dict;
+    }
     
     #region " Process "
 
@@ -125,5 +159,11 @@ public class Actual
     }
     
     #endregion
+
+    private class CategoryGoalDefinition
+    {
+        public Guid Id { get; set; }
+        public string? Goal_Def { get; set; }
+    }
 
 }

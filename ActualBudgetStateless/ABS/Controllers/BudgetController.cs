@@ -26,6 +26,7 @@ public class BudgetController : Controller
     {
         var summaryTask = _actual.GetMonthInfo(year, month);
         var notesTask = GetNotesForCategories();
+        var automationsTask = _actual.GetAutomationsForCategories();
         
         var summary = await summaryTask;
         if (summary == null)
@@ -47,6 +48,7 @@ public class BudgetController : Controller
         }
 
         var notes = await notesTask;
+        var automations = await automationsTask;
         foreach (var group in mapped.CategoryGroups)
         {
             foreach (var category in group.Categories)
@@ -54,6 +56,11 @@ public class BudgetController : Controller
                 if (notes.TryGetValue(category.Id, out var note))
                 {
                     category.Notes = note;
+                }
+
+                if (automations.TryGetValue(category.Id, out var automation))
+                {
+                    category.Automation = Map(automation);
                 }
             }
         }
