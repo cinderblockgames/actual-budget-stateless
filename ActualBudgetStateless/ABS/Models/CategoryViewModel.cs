@@ -12,4 +12,10 @@ public class CategoryViewModel
     public string Balance { get; set; }
     public string Received { get; set; }
     public bool Carryover { get; set; }
+    
+    public string Automation { get; set; }
+    public string Notes { get; set; }
+
+    public bool ShowAutomation => !string.IsNullOrWhiteSpace(Automation);
+    public bool ShowNotes => !string.IsNullOrWhiteSpace(Notes);
 }

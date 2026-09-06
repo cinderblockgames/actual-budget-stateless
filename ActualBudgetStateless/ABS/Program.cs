@@ -3,7 +3,13 @@ using ABS.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    foreach (var type in Dependencies.GetAllFilters())
+    {
+        options.Filters.Add(type);
+    }
+});
 Dependencies.Load(builder.Services);
 
 var app = builder.Build();

@@ -22,8 +22,8 @@ public static partial class Mapper
         };
     }
 
-    public static IEnumerable<CategoryViewModel> Map(IEnumerable<Category> input)
+    public static CategoryViewModel[] Map(Category[] input)
     {
-        return input.Select(Map);
+        return input.Select(Map).ToArray();
     }
 }

@@ -27,8 +27,8 @@ public static partial class Mapper
         };
     }
 
-    public static IEnumerable<TransactionViewModel>? Map(IEnumerable<Transaction>? input)
+    public static TransactionViewModel[]? Map(Transaction[]? input)
     {
-        return input?.Select(Map);
+        return input?.Select(Map).ToArray();
     }
 }

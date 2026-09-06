@@ -20,8 +20,8 @@ public static partial class Mapper
         };
     }
     
-    public static IEnumerable<CategoryGroupViewModel> Map(IEnumerable<CategoryGroup> input)
+    public static CategoryGroupViewModel[] Map(CategoryGroup[] input)
     {
-        return input.Select(Map);
+        return input.Select(Map).ToArray();
     }
 }

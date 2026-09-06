@@ -5,13 +5,16 @@ public class EnvironmentVariables
     public string ApiUrl { get; }
     public string ApiKey { get; }
     public string BudgetSyncId { get; }
+    public string? ActualLinkUrl { get; }
 
     private EnvironmentVariables(
-        string apiUrl, string apiKey, string budgetSyncId)
+        string apiUrl, string apiKey, string budgetSyncId,
+        string? actualLinkUrl)
     {
         ApiUrl = apiUrl;
         ApiKey = apiKey;
         BudgetSyncId = budgetSyncId;
+        ActualLinkUrl = actualLinkUrl;
     }
 
     public static EnvironmentVariables Build()
@@ -50,7 +53,10 @@ public class EnvironmentVariables
             throw new Exception("BUDGET_SYNC_ID must be valued.");
         }
 
+        var actualLinkUrl = env["ACTUAL_LINK_URL"] as string;
+
         return new EnvironmentVariables(
-            apiUrl, apiKey, budgetSyncId);
+            apiUrl, apiKey, budgetSyncId,
+            actualLinkUrl);
     }
 }

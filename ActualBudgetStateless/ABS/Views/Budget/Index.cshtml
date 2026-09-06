@@ -5,7 +5,7 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">
+    <h1 class="display-6">
         @if (Model.PreviousMonth != null)
         {
             <a class="text-dark" style="text-decoration: none" href="../@Model.PreviousMonth.Year/@Model.PreviousMonth.Month">&lt;</a>
@@ -61,10 +61,19 @@
             @foreach (var category in group.Categories)
             {
                 <tr>
-                    <td>@category.Name</td>
+                    <td>
+                        @category.Name
+                        @if (category.ShowAutomation) {
+                            <span data-toggle="tooltip" title="@category.Automation">🕒</span>
+                        }
+                        @if (category.ShowNotes)
+                        {
+                            <span data-toggle="tooltip" title="@category.Notes">📄</span>
+                        }
+                    </td>
                     <td>@category.Budgeted</td>
                     <td>@category.Spent</td>
-                    <td>@category.Balance</td>
+                    <td>@category.Balance @(@category.Carryover ? "→" : "")</td>
                 </tr>
             }
             </tbody>

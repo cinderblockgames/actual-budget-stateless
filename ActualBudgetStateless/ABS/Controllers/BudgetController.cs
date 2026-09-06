@@ -11,7 +11,7 @@ public class BudgetController : Controller
     #region " Constructor, Private Properties "
     
     private readonly Actual _actual;
-    private readonly Cache<IEnumerable<string>> _months;
+    private readonly Cache<string[]> _months;
     
     public BudgetController(Actual actual)
     {
@@ -24,7 +24,11 @@ public class BudgetController : Controller
     [Route("budget/{year}/{month}")]
     public async Task<IActionResult> Index(int year, int month)
     {
-        var summary = await _actual.GetMonthInfo(year, month);
+        var summaryTask = _actual.GetMonthInfo(year, month);
+        var notesTask = GetNotesForCategories();
+        var automationsTask = _actual.GetAutomationsForCategories();
+        
+        var summary = await summaryTask;
         if (summary == null)
         {
             return RedirectToAction(nameof(Index), new { year = DateTime.Now.Year, month = DateTime.Now.Month });
@@ -43,6 +47,35 @@ public class BudgetController : Controller
             mapped.NextMonth = null;
         }
 
+        var notes = await notesTask;
+        var automations = await automationsTask;
+        foreach (var group in mapped.CategoryGroups)
+        {
+            foreach (var category in group.Categories)
+            {
+                if (notes.TryGetValue(category.Id, out var note))
+                {
+                    category.Notes = note;
+                }
+
+                if (automations.TryGetValue(category.Id, out var automation))
+                {
+                    category.Automation = Map(automation);
+                }
+            }
+        }
+
         return View(mapped);
+    }
+
+    private async Task<Dictionary<Guid, string>> GetNotesForCategories()
+    {
+        var categories = await _actual.GetCategories();
+        var tasks = categories.ToDictionary(
+            c => c.Id,
+            c => _actual.GetNotesForCategory(c.Id));
+        return tasks.ToDictionary(
+            kvp => kvp.Key,
+            kvp => kvp.Value.GetAwaiter().GetResult());
     }
 }

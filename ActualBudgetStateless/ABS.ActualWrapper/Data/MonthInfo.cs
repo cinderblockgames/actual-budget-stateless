@@ -12,5 +12,5 @@ public class MonthInfo
     public decimal TotalIncome { get; set; }
     public decimal TotalSpent { get; set; }
     public decimal TotalBalance { get; set; }
-    public IEnumerable<CategoryGroup> CategoryGroups { get; set; }
+    public CategoryGroup[] CategoryGroups { get; set; }
 }
