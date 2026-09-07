@@ -28,4 +28,18 @@ public class Cache<T>(Func<Task<T>> retriever, TimeSpan validity)
 
         return _value;
     }
+
+    public async Task Invalidate()
+    {
+        await _semaphore.WaitAsync();
+        try
+        {
+            _value = null;
+            _expires = null;
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
 }
