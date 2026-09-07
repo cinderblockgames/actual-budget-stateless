@@ -25,6 +25,9 @@
         <tr class="table-primary">
             <th scope="col">
                 @(Model.ToBudget.StartsWith("-") ? "Overbudgeted" : "To Budget")
+                <span id="show-hide-hidden-categories"
+                      data-toggle="tooltip"
+                      title="Hide Hidden Categories">👁</span>
                 <br/>
                 @Model.ToBudget
             </th>
@@ -50,7 +53,7 @@
         {
             var id = group.Name.Replace(' ', '-');
             
-            <tr class="table-info" data-collapse="#@id">
+            <tr class="table-info" data-collapse="#@id" data-hidden="@group.Hidden">
                 <th scope="col">@group.Name</th>
                 <th scope="col">@group.Budgeted</th>
                 <th scope="col">@group.Spent</th>
@@ -60,7 +63,7 @@
             <tbody id="@id">
             @foreach (var category in group.Categories)
             {
-                <tr>
+                <tr data-hidden="@(group.Hidden || category.Hidden)">
                     <td>
                         @category.Name
                         @if (category.ShowAutomation) {
@@ -86,7 +89,7 @@
         {
             var id = group.Name.Replace(' ', '-');
             
-            <tr class="table-primary" data-collapse="#@id">
+            <tr class="table-primary" data-collapse="#@id" data-hidden="@group.Hidden">
                 <th scope="col">@group.Name</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
@@ -96,7 +99,7 @@
             <tbody id="@id">
             @foreach (var category in group.Categories)
             {
-                <tr>
+                <tr data-hidden="@(group.Hidden || category.Hidden)">
                     <td>@category.Name</td>
                     <td></td>
                     <td></td>
@@ -116,6 +119,15 @@
 
             const collapsed = (localStorage.getItem('collapsed') || '').split('|');
             $(collapsed).each((id, name) => $(name).hide());
+            
+            const hidden = localStorage.getItem('hidden');
+            if (hidden) {
+                toggler = $('#show-hide-hidden-categories');
+                toggler.tooltip('dispose');
+                toggler.attr('title', 'Show Hidden Categories');
+                toggler.tooltip();
+                $('tr[data-hidden="True"]').hide();
+            }
         });
 
         $('[data-collapse]').on('click', function() {
@@ -133,5 +145,23 @@
             }
             localStorage.setItem('collapsed', newCollapsed.join('|'));
         })
+        
+        $('#show-hide-hidden-categories').on('click', function() {
+            const hidden = localStorage.getItem('hidden');
+            const toggler = $('#show-hide-hidden-categories');
+            if (hidden) {
+                localStorage.removeItem('hidden');
+                toggler.tooltip('dispose');
+                toggler.attr('title', 'Hide Hidden Categories');
+                toggler.tooltip();
+                $('tr[data-hidden="True"]').show();
+            } else {
+                localStorage.setItem('hidden', true);
+                toggler.tooltip('dispose');
+                toggler.attr('title', 'Show Hidden Categories');
+                toggler.tooltip();
+                $('tr[data-hidden="True"]').hide();
+            }
+        });
     </script>
 }
