@@ -4,6 +4,13 @@
     ViewData["Title"] = $"{Model.Month.Display}";
 }
 
+@if (Model.Uncategorized != null)
+{
+    <div class="alert alert-warning" role="alert">
+        <a class="alert-link" asp-area="" asp-controller="Transactions" asp-action="Uncategorized">@Model.Uncategorized</a>
+    </div>
+}
+
 @if (Model.Overbudgeted)
 {
     <div class="alert alert-danger" role="alert">
