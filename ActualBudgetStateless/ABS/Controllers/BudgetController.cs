@@ -87,7 +87,9 @@ public class BudgetController : Controller
     {
         var accounts = await _actual.GetAccounts();
         var transactions = await _actual.GetUncategorizedTransactions(
-            accounts.Select(acct => acct.Id),
+            accounts
+                .Where(acct => !acct.Closed && !acct.OffBudget)
+                .Select(acct => acct.Id),
             1);
         if (transactions?.Any() == true)
         {
