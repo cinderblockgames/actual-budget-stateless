@@ -49,7 +49,7 @@ public class TransactionsController : Controller
     public async Task<IActionResult> Uncategorized(int page = 1)
     {
         var accountIds = (await _accounts.GetValue())
-            .Where(acct => !acct.Closed)
+            .Where(acct => !acct.Closed && !acct.OffBudget)
             .Select(acct => acct.Id);
         return await Process(
             pg => _actual.GetUncategorizedTransactions(accountIds, pg),

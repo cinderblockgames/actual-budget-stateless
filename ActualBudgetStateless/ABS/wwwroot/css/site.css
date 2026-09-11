@@ -39,7 +39,8 @@ main {
 }
 
 [data-href],
-[data-collapse] {
+[data-collapse],
+#show-hide-hidden-categories {
   cursor: pointer;
 }
 

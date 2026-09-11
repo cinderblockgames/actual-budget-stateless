@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using ABS.ActualWrapper;
 using ABS.Configuration;
@@ -27,6 +28,7 @@ public class BudgetController : Controller
         var summaryTask = _actual.GetMonthInfo(year, month);
         var notesTask = GetNotesForCategories();
         var automationsTask = _actual.GetAutomationsForCategories();
+        var uncategorizedTask = Uncategorized();
         
         var summary = await summaryTask;
         if (summary == null)
@@ -65,6 +67,8 @@ public class BudgetController : Controller
             }
         }
 
+        mapped.Uncategorized = await uncategorizedTask;
+
         return View(mapped);
     }
 
@@ -78,4 +82,33 @@ public class BudgetController : Controller
             kvp => kvp.Key,
             kvp => kvp.Value.GetAwaiter().GetResult());
     }
+
+    private async Task<string?> Uncategorized()
+    {
+        var accounts = await _actual.GetAccounts();
+        var transactions = await _actual.GetUncategorizedTransactions(
+            accounts
+                .Where(acct => !acct.Closed && !acct.OffBudget)
+                .Select(acct => acct.Id),
+            1);
+        if (transactions?.Any() == true)
+        {
+            if (transactions.Length == 50)
+            {
+                return "You have 50+ uncategorized transactions.";
+            }
+
+            var sb = new StringBuilder("You have ");
+            sb.Append(transactions.Length);
+            sb.Append(" uncategorized transaction");
+            if (transactions.Length > 1) sb.Append('s');
+            sb.Append(" (");
+            sb.Append(ToDollars(transactions.Sum(trx => trx.Amount ?? 0)));
+            sb.Append(").");
+            return sb.ToString();
+        }
+
+        return null;
+    }
+    
 }

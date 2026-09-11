@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace ABS.ActualWrapper.Query;
 
+[JsonDerivedType(typeof(UncategorizedFilter))]
 public class Filter
 {
     [JsonPropertyName("$or")]
