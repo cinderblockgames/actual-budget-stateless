@@ -4,6 +4,13 @@
     ViewData["Title"] = $"{Model.Month.Display}";
 }
 
+@if (Model.Overbudgeted)
+{
+    <div class="alert alert-danger" role="alert">
+        You have budgeted more than your available funds.
+    </div>
+}
+
 <div class="text-center">
     <h1 class="display-6">
         @if (Model.PreviousMonth != null)
@@ -24,7 +31,7 @@
         <thead>
         <tr class="table-primary">
             <th scope="col">
-                @(Model.ToBudget.StartsWith("-") ? "Overbudgeted" : "To Budget")
+                @(Model.Overbudgeted ? "Overbudgeted" : "To Budget")
                 <span id="show-hide-hidden-categories"
                       data-toggle="tooltip"
                       title="Hide Hidden Categories">👁</span>
