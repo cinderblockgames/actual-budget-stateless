@@ -8,3 +8,9 @@ The initial goal of this project is to provide readonly access to the data, with
 This project is released into the public domain under the NON-AI-UNLICENSE.
 AI training and dataset usage is prohibited.
 See [LICENSE](./LICENSE) for full terms.
+
+## Contribution Policy
+
+This project adheres to the [SciActive Human Contribution Policy 2-NE](HUMAN-CONTRIBUTION-POLICY-2-NE.md).
+
+![SciActive Human Contribution Policy seal](https://raw.githubusercontent.com/cinderblockgames/actual-budget-stateless/refs/heads/main/Seal-of-Human-Authorship-300.png)
