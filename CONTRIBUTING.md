@@ -1,6 +1,6 @@
 To contribute:
 1. Fork the `develop` branch of this repository.
-2. Add a `Properties/launchSettings.json` file with your `environmentVariables`.
+2. Add your environment variables through a `Properties/launchSettings.json` file or whichever other method your IDE supports.
 3. Make and test your changes.
 4. Open a pull request with a description of what's been changed and how it was tested.
 
