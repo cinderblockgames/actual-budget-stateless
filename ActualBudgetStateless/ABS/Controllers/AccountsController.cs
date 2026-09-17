@@ -2,15 +2,18 @@ using Microsoft.AspNetCore.Mvc;
 using ABS.ActualWrapper;
 using ABS.ActualWrapper.Data;
 using ABS.Models;
+using static ABS.Configuration.Constants.Session;
 using static ABS.Mapper.Mapper;
 
 namespace ABS.Controllers;
 
 public class AccountsController(Actual actual) : Controller
 {
+    private Guid BudgetId => new Guid(HttpContext.Session.Get(Keys.BudgetFile)!);
+    
     public async Task<IActionResult> Index()
     {
-        var accounts = await actual.GetAccounts();
+        var accounts = await actual.GetAccounts(BudgetId);
         
         var openAccounts = accounts.Where(acc => !acc.Closed).ToArray();
         var onBudgetAccounts = openAccounts.Where(acc => !acc.OffBudget).ToArray();
@@ -32,6 +35,6 @@ public class AccountsController(Actual actual) : Controller
 
     private string Sum(Account[] accounts)
     {
-        return ToDollars(accounts.Sum(acc => acc.WorkingBalance));
+        return ToDollars(accounts.Sum(acc => acc.WorkingBalance)) ?? "0";
     }
 }

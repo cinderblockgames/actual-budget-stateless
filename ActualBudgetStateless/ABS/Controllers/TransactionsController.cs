@@ -1,44 +1,27 @@
-using Microsoft.AspNetCore.Mvc;
 using ABS.ActualWrapper;
 using ABS.ActualWrapper.Data;
-using ABS.Configuration;
 using ABS.Models;
+using Microsoft.AspNetCore.Mvc;
+using static ABS.Configuration.Constants.Session;
 using static ABS.Mapper.Mapper;
 
 namespace ABS.Controllers;
 
-public class TransactionsController : Controller
+public class TransactionsController(Actual actual) : Controller
 {
-    
-    #region " Constructor, Private Properties "
-    
-    private readonly Actual _actual;
-    private readonly Cache<Account[]> _accounts;
-    private readonly Cache<CategoryStub[]> _categories;
-    private readonly Cache<Payee[]> _payees;
-    
-    public TransactionsController(Actual actual)
-    {
-        _actual = actual;
 
-        var validity = TimeSpan.FromMinutes(2); // Just doing a quick cache for processing.
-        _accounts = new(_actual.GetAccounts, validity);
-        _categories = new(_actual.GetCategories, validity);
-        _payees = new(_actual.GetPayees, validity);
-    }
-    
-    #endregion
+    private Guid BudgetId => new Guid(HttpContext.Session.Get(Keys.BudgetFile)!);
     
     [Route("transactions/account/{accountId}")]
     [Route("transactions/account/{accountId}/{page}")]
     public async Task<IActionResult> Account(Guid accountId, int page = 1)
     {
         return await Process(
-            pg => _actual.GetTransactions(accountId, pg),
+            pg => actual.GetTransactions(BudgetId, accountId, pg),
             page,
             () =>
             {
-                var accounts = _accounts.GetValue().GetAwaiter().GetResult(); // Already cached.
+                var accounts = actual.GetAccounts(BudgetId).GetAwaiter().GetResult();
                 var account = accounts.SingleOrDefault(acct => acct.Id == accountId);
                 return account?.Name;
             });
@@ -48,11 +31,11 @@ public class TransactionsController : Controller
     [Route("transactions/uncategorized/{page}")]
     public async Task<IActionResult> Uncategorized(int page = 1)
     {
-        var accountIds = (await _accounts.GetValue())
-            .Where(acct => !acct.Closed && !acct.OffBudget)
+        var accountIds = (await actual.GetAccounts(BudgetId))
+            .Where(acct => acct is { Closed: false, OffBudget: false })
             .Select(acct => acct.Id);
         return await Process(
-            pg => _actual.GetUncategorizedTransactions(accountIds, pg),
+            pg => actual.GetUncategorizedTransactions(BudgetId, accountIds, pg),
             page,
             () => "Uncategorized Transactions");
     }
@@ -94,11 +77,11 @@ public class TransactionsController : Controller
         int page,
         Func<string?> contextRetriever)
     {
-        var accountIds = (await _accounts.GetValue())
+        var accountIds = (await actual.GetAccounts(BudgetId))
             .Where(selector)
             .Select(acct => acct.Id);
         return await Process(
-            pg => _actual.GetTransactions(accountIds, pg),
+            pg => actual.GetTransactions(BudgetId, accountIds, pg),
             page,
             contextRetriever);
     }
@@ -114,8 +97,7 @@ public class TransactionsController : Controller
             return Json(EMPTY);
         }
 
-        var transactions = await GetTransactions(retriever(page));
-        var context = contextRetriever();
+        var transactions = await retriever(page);
         
         if (transactions?.Any() != true)
         {
@@ -144,25 +126,15 @@ public class TransactionsController : Controller
         return View(vm);
     }
 
-    private async Task<Transaction[]> GetTransactions(Task<Transaction[]> retriever)
-    {
-        // Pre-fill caches.
-        var accountsTask = _accounts.GetValue();
-        var categoriesTask = _categories.GetValue();
-        var payeesTask = _payees.GetValue();
-        await Task.WhenAll(retriever, accountsTask, categoriesTask, payeesTask);
-        return await retriever;
-    }
-
     private async Task<TransactionViewModel[]> MapTransactions(Transaction[] transactions)
     {
-        var accountMap = (await _accounts.GetValue()).ToDictionary(
+        var accountMap = (await actual.GetAccounts(BudgetId)).ToDictionary(
             a => a.Id,
             a => a.Name);
-        var categoryMap = (await _categories.GetValue()).ToDictionary(
+        var categoryMap = (await actual.GetCategories(BudgetId)).ToDictionary(
             c => c.Id,
             c => c.Name);
-        var payeeMap = (await _payees.GetValue()).ToDictionary(
+        var payeeMap = (await actual.GetPayees(BudgetId)).ToDictionary(
             p => p.Id,
             p => p.Name);
 

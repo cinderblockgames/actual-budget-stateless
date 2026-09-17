@@ -14,8 +14,7 @@ public static class Dependencies
         services.AddSingleton(new ActualWrapper.ConnectionInfo
         {
             ApiUrl = env.ApiUrl,
-            ApiKey = env.ApiKey,
-            BudgetSyncId = Guid.Parse(env.BudgetSyncId)
+            ApiKey = env.ApiKey
         });
         services.AddSingleton<ActualWrapper.Actual>();
     }

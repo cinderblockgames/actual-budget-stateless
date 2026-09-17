@@ -1,0 +1,19 @@
+﻿@model IEnumerable<BudgetFileViewModel>
+
+@{
+    ViewData["Title"] = $"Actual Budget (Stateless)";
+}
+
+<div class="text-center">
+    <h1 class="display-6">
+        Select Budget File
+    </h1>
+    <table class="table table-striped table-bordered">
+        @foreach (var file in Model)
+        {
+            <tr class="table-info" data-href="@Url.ActionLink("SetBudgetFile", "SwitchBudget", new { id = file.Id })">
+                <th scope="col">@file.Name</th>
+            </tr>
+        }
+    </table>
+</div>
