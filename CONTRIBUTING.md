@@ -5,7 +5,6 @@ To contribute:
     - ASPNETCORE_ENVIRONMENT=Development
     - API_URL
     - API_KEY
-    - BUDGET_SYNC_ID (this will eventually be selected in app rather than set)
    
    Optional:
     - ASPNETCORE_URLS=http://+:5008
