@@ -5,29 +5,19 @@ using ABS.Configuration;
 using static ABS.Mapper.Mapper;
 
 namespace ABS.Controllers;
+using static ABS.Configuration.Constants.Session;
 
-public class BudgetController : Controller
+public class BudgetController(Actual actual) : Controller
 {
-    
-    #region " Constructor, Private Properties "
-    
-    private readonly Actual _actual;
-    private readonly Cache<string[]> _months;
-    
-    public BudgetController(Actual actual)
-    {
-        _actual = actual;
-        _months = new(_actual.GetMonths, TimeSpan.FromHours(1));
-    }
-    
-    #endregion
+
+    private Guid BudgetId => new Guid(HttpContext.Session.Get(Keys.BudgetFile)!);
     
     [Route("budget/{year}/{month}")]
     public async Task<IActionResult> Index(int year, int month)
     {
-        var summaryTask = _actual.GetMonthInfo(year, month);
+        var summaryTask = actual.GetMonthInfo(BudgetId, year, month);
         var notesTask = GetNotesForCategories();
-        var automationsTask = _actual.GetAutomationsForCategories();
+        var automationsTask = actual.GetAutomationsForCategories(BudgetId);
         var uncategorizedTask = Uncategorized();
         
         var summary = await summaryTask;
@@ -37,7 +27,7 @@ public class BudgetController : Controller
         }
 
         var mapped = Map(summary);
-        var available = await _months.GetValue();
+        var available = await actual.GetMonths(BudgetId);
 
         if (!available.Contains(mapped.PreviousMonth.Joined))
         {
@@ -74,10 +64,10 @@ public class BudgetController : Controller
 
     private async Task<Dictionary<Guid, string>> GetNotesForCategories()
     {
-        var categories = await _actual.GetCategories();
+        var categories = await actual.GetCategories(BudgetId);
         var tasks = categories.ToDictionary(
             c => c.Id,
-            c => _actual.GetNotesForCategory(c.Id));
+            c => actual.GetNotesForCategory(BudgetId, c.Id));
         return tasks.ToDictionary(
             kvp => kvp.Key,
             kvp => kvp.Value.GetAwaiter().GetResult());
@@ -85,8 +75,9 @@ public class BudgetController : Controller
 
     private async Task<string?> Uncategorized()
     {
-        var accounts = await _actual.GetAccounts();
-        var transactions = await _actual.GetUncategorizedTransactions(
+        var accounts = await actual.GetAccounts(BudgetId);
+        var transactions = await actual.GetUncategorizedTransactions(
+            BudgetId,
             accounts
                 .Where(acct => !acct.Closed && !acct.OffBudget)
                 .Select(acct => acct.Id),

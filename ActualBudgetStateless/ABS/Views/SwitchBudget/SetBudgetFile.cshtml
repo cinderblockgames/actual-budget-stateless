@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = $"Actual Budget (Stateless)";
+}
+
+<div class="text-center">
+    redirecting...
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        localStorage.setItem("budget", "@ViewBag.BudgetId");
+        
+        let month = localStorage.getItem("month-@ViewBag.BudgetId");
+        if (!month) {
+            const today = new Date();
+            const mm =  String(today.getMonth() + 1).padStart(2, '0');
+            const yyyy = today.getFullYear();
+            month = [yyyy, mm].join("-");
+            localStorage.setItem("month-@ViewBag.BudgetId", month);
+        }
+        window.location.href = ["@Url.ActionLink("Index", "Budget")", ...month.split("-")].join("/");
+    </script>
+}

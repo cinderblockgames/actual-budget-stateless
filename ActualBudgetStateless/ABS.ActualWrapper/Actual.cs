@@ -5,87 +5,97 @@ using ABS.ActualWrapper.Query;
 
 namespace ABS.ActualWrapper;
 
+// Singleton
 public class Actual
 {
     
-    #region " Constructor, Private Properties "
-    
-    private HttpClient Api { get; }
+    public BudgetFileStub[] BudgetFiles { get; }
 
+    #region " Constructor, Private Properties "
+
+    private Uri ApiUrl { get; }
+    private HttpClient Api { get; }
+    
     public Actual(ConnectionInfo connectionInfo)
     {
-        Api = new HttpClient()
-        {
-            BaseAddress = new Uri(
-                new Uri(connectionInfo.ApiUrl!),
-                $"v1/budgets/{connectionInfo.BudgetSyncId!}/"
-            )
-        };
+        ApiUrl = new Uri(connectionInfo.ApiUrl!);
+        Api = new HttpClient { BaseAddress = new Uri(ApiUrl, "v1/budgets/") };
         Api.DefaultRequestHeaders.Add("X-API-KEY", connectionInfo.ApiKey!);
+            
+        // Pre-fetch budget file stubs.
+        BudgetFiles = FillBudgetFiles().GetAwaiter().GetResult();
+    }
+    
+    private async Task<BudgetFileStub[]> FillBudgetFiles()
+    {
+        var files = await Process<BudgetFileStub[]>(() =>
+            Api.GetAsync("")
+        );
+        return files.Where(file => "remote".Equals(file.State, StringComparison.OrdinalIgnoreCase)).ToArray();
     }
     
     #endregion
-
-    public async Task<CategoryStub[]> GetCategories()
+    
+    public async Task<CategoryStub[]> GetCategories(Guid budgetId)
     {
         return await Process<CategoryStub[]>(() =>
-            Api.GetAsync("categories")
+            Api.GetAsync($"{budgetId}/categories")
         );
     }
     
-    public async Task<Payee[]> GetPayees()
+    public async Task<Payee[]> GetPayees(Guid budgetId)
     {
         return await Process<Payee[]>(() =>
-            Api.GetAsync("payees")
+            Api.GetAsync($"{budgetId}/payees")
         );
     }
     
-    public async Task<string[]> GetMonths()
+    public async Task<string[]> GetMonths(Guid budgetId)
     {
         return await Process<string[]>(() =>
-            Api.GetAsync("months")
+            Api.GetAsync($"{budgetId}/months")
         );
     }
     
-    public async Task<MonthInfo> GetMonthInfo(int year, int month)
+    public async Task<MonthInfo> GetMonthInfo(Guid budgetId, int year, int month)
     {
         return await Process<MonthInfo>(() =>
-            Api.GetAsync($"months/{year}-{month:00}")
+            Api.GetAsync($"{budgetId}/months/{year}-{month:00}")
         );
     }
 
-    public async Task<Account[]> GetAccounts()
+    public async Task<Account[]> GetAccounts(Guid budgetId)
     {
         return await Process<Account[]>(() =>
-            Api.GetAsync("accounts?include_balances=true&exclude_offbudget=false&exclude_closed=false")
+            Api.GetAsync($"{budgetId}/accounts?include_balances=true&exclude_offbudget=false&exclude_closed=false")
         );
     }
 
-    public async Task<Transaction[]> GetTransactions(Guid accountId, int page)
+    public async Task<Transaction[]> GetTransactions(Guid budgetId, Guid accountId, int page)
     {
         return await Process<Transaction[]>(() =>
-            Api.GetAsync($"accounts/{accountId}/transactions?since_date=1970-01-01&limit=50&page={page}")
+            Api.GetAsync($"{budgetId}/accounts/{accountId}/transactions?since_date=1970-01-01&limit=50&page={page}")
         );
     }
 
-    public async Task<Transaction[]> GetTransactions(IEnumerable<Guid> accountIds, int page)
+    public async Task<Transaction[]> GetTransactions(Guid budgetId, IEnumerable<Guid> accountIds, int page)
     {
-        return await ProcessTransactionsRequest(new Filter(accountIds), page);
+        return await ProcessTransactionsRequest(budgetId, new Filter(accountIds), page);
     }
 
-    public async Task<Transaction[]> GetUncategorizedTransactions(IEnumerable<Guid> accountIds, int page)
+    public async Task<Transaction[]> GetUncategorizedTransactions(Guid budgetId, IEnumerable<Guid> accountIds, int page)
     {
-        return await ProcessTransactionsRequest(new UncategorizedFilter(accountIds), page);
+        return await ProcessTransactionsRequest(budgetId, new UncategorizedFilter(accountIds), page);
     }
 
-    public async Task<string> GetNotesForCategory(Guid categoryId)
+    public async Task<string> GetNotesForCategory(Guid budgetId, Guid categoryId)
     {
         return await Process<string>(() =>
-            Api.GetAsync($"notes/category/{categoryId}")
+            Api.GetAsync($"{budgetId}/notes/category/{categoryId}")
         );
     }
 
-    public async Task<Dictionary<Guid, GoalDefinition[]>> GetAutomationsForCategories()
+    public async Task<Dictionary<Guid, GoalDefinition[]>> GetAutomationsForCategories(Guid budgetId)
     {
         var request = new Wrapper
         {
@@ -97,7 +107,7 @@ public class Actual
         };
 
         var response = await Process<CategoryGoalDefinition[]>(() =>
-            Api.PostAsJsonAsync("run-query", request)
+            Api.PostAsJsonAsync($"{budgetId}/run-query", request)
         );
         
         var options = new JsonSerializerOptions
@@ -120,7 +130,7 @@ public class Actual
     
     #region " Process "
 
-    private async Task<Transaction[]> ProcessTransactionsRequest(Filter filter, int page)
+    private async Task<Transaction[]> ProcessTransactionsRequest(Guid budgetId, Filter filter, int page)
     {
         var request = new Wrapper
         {
@@ -135,7 +145,7 @@ public class Actual
         };
 
         return await Process<Transaction[]>(() =>
-            Api.PostAsJsonAsync("run-query", request)
+            Api.PostAsJsonAsync($"{budgetId}/run-query", request)
         );
     }
 
@@ -150,7 +160,8 @@ public class Actual
                 Console.WriteLine(await request.ReadAsStringAsync());
             }
 
-            Console.WriteLine($"    [{(int)response.StatusCode} {response.StatusCode}] {await response.Content.ReadAsStringAsync()}");
+            Console.WriteLine(
+                $"    [{(int)response.StatusCode} {response.StatusCode}] {await response.Content.ReadAsStringAsync()}");
             return default;
         }
 

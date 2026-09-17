@@ -1,21 +1,15 @@
-﻿@model MonthInfoViewModel
-
-@{
+﻿@{
     ViewData["Title"] = $"Actual Budget (Stateless)";
 }
 
 @section Scripts
 {
     <script type="text/javascript">
-        var month = localStorage.getItem("month");
-        if (!month)
-        {
-            var today = new Date();
-            var mm =  String(today.getMonth() + 1).padStart(2, '0');
-            var yyyy = today.getFullYear();
-            month = [yyyy, mm].join("-");
-            localStorage.setItem("month", month);
+        const budget = localStorage.getItem("budget");
+        if (!budget) {
+            window.location.href = "switchbudget";
+        } else {
+            window.location.href = "switchbudget/setbudgetfile/" + budget;
         }
-        window.location.href = ["budget", ...month.split("-")].join("/");
     </script>
 }
