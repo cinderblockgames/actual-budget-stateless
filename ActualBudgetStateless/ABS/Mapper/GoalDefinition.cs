@@ -12,7 +12,7 @@ public static partial class Mapper
         if ("periodic".Equals(input.Type, StringComparison.OrdinalIgnoreCase))
         {
             sb.Append($"Budget {input.Amount:#,##0.00} every ");
-            var period = input.Period!;
+            var period = input.PeriodDetails!;
             sb.Append(period.Amount > 1 ? $"{period.Amount} {period.Period}s" : period.Period);
         }
         else if ("by".Equals(input.Type, StringComparison.OrdinalIgnoreCase))
@@ -25,11 +25,21 @@ public static partial class Mapper
                 sb.Append(input.Repeat > 1 ? $"{input.Repeat} years" : "year");
             }
         }
+        else if ("refill".Equals(input.Type, StringComparison.OrdinalIgnoreCase))
+        {
+            sb.Append("Refill to balance limit");
+        }
+        else if ("limit".Equals(input.Type, StringComparison.OrdinalIgnoreCase))
+        {
+            sb.Append($"Set a balance limit of {input.Amount:#,##0.00}/{input.PeriodType} (");
+            sb.Append(input.Hold ? "soft" : "hard");
+            sb.Append(" cap)");
+        }
         return sb.ToString();
     }
 
     public static string Map(GoalDefinition[] input)
     {
-        return string.Join("\n", input.Select(Map));
+        return string.Join("\n", input.OrderBy(def => def.Priority.HasValue).Select(Map));
     }
 }
