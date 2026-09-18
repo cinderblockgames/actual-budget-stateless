@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text.Json;
 using ABS.ActualWrapper.Data;
@@ -102,7 +103,7 @@ public class Actual
             AqlQuery = new AqlQuery
             {
                 Table = "categories",
-                Select = ["id", "goal_def"]
+                Select = ["id", "name", "goal_def"]
             }
         };
 
@@ -121,6 +122,21 @@ public class Actual
             if (value.Goal_Def != null)
             {
                 var def = JsonSerializer.Deserialize<GoalDefinition[]>(value.Goal_Def, options);
+                foreach (var d in def)
+                {
+                    if (d.Period.HasValue)
+                    {
+                        var period = d.Period!.Value;
+                        if (period.ValueKind == JsonValueKind.String)
+                        {
+                            d.PeriodType = period.GetString();
+                        }
+                        else
+                        {
+                            d.PeriodDetails = JsonSerializer.Deserialize<GoalDefinitionPeriod>(period.ToString(), options);
+                        }
+                    }
+                }
                 dict[value.Id] = def!;
             }
         }
@@ -174,6 +190,7 @@ public class Actual
     private class CategoryGoalDefinition
     {
         public Guid Id { get; set; }
+        public required string Name { get; set; }
         public string? Goal_Def { get; set; }
     }
 
