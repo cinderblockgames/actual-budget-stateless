@@ -1,4 +1,5 @@
 using ABS.Configuration;
+using ABS.Jobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,5 +45,11 @@ app.MapControllerRoute(
         pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// Bank sync every hour (if enabled).
+var bankSync = app.Services.BuildJob<BankSyncJob>(TimeSpan.FromHours(1));
 
 app.Run();
+
+Console.WriteLine("Shutting down; please wait.");
+bankSync.Stop().Wait();
+Console.WriteLine("Shutdown complete.");

@@ -36,6 +36,13 @@ public class Actual
     }
     
     #endregion
+
+    public async Task<bool> BankSync(Guid budgetId)
+    {
+        return await Process<bool>(() =>
+            Api.PostAsync($"{budgetId}/accounts/banksync", null)
+        );
+    }
     
     public async Task<CategoryStub[]> GetCategories(Guid budgetId)
     {

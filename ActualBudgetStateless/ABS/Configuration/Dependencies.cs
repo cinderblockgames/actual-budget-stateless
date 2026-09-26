@@ -17,6 +17,8 @@ public static class Dependencies
             ApiKey = env.ApiKey
         });
         services.AddSingleton<ActualWrapper.Actual>();
+        services.AddSingleton(provider =>
+            new Jobs.BankSyncJob(provider.GetRequiredService<ActualWrapper.Actual>(), env.BankSyncBudgetIds));
     }
 
     public static IEnumerable<Type> GetAllFilters()
