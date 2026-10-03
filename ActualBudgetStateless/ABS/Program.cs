@@ -16,9 +16,13 @@ Dependencies.Load(builder.Services);
 // Add session.
 builder.Services.AddSession(options =>
 {
+    options.Cookie.Name = ".ActualStateless.Session";
     options.IdleTimeout = TimeSpan.FromHours(2);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+#if !DEBUG
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+#endif
 });
 
 var app = builder.Build();
