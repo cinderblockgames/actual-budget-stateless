@@ -11,6 +11,13 @@
     </div>
 }
 
+@if (Model.Overspent != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @Model.Overspent
+    </div>
+}
+
 @if (Model.Overbudgeted)
 {
     <div class="alert alert-danger" role="alert">

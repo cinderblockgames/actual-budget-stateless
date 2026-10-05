@@ -16,7 +16,9 @@ public class MonthInfoViewModel
     public string? TotalSpent { get; set; }
     public string? TotalBalance { get; set; }
     public IEnumerable<CategoryGroupViewModel>? CategoryGroups { get; set; }
+    
     public string? Uncategorized { get; set; }
+    public string? Overspent { get; set; }
 
     public bool Overbudgeted => ToBudget?.StartsWith('-') == true;
 }
