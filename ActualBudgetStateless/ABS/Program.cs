@@ -1,4 +1,6 @@
 using ABS.Configuration;
+using ABS.Jobs;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,9 +17,13 @@ Dependencies.Load(builder.Services);
 // Add session.
 builder.Services.AddSession(options =>
 {
+    options.Cookie.Name = ".ActualStateless.Session";
     options.IdleTimeout = TimeSpan.FromHours(2);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+#if !DEBUG
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+#endif
 });
 
 var app = builder.Build();
@@ -44,5 +50,14 @@ app.MapControllerRoute(
         pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// Serve files from wwwroot.
+app.UseStaticFiles();
+
+// Bank sync every hour (if enabled).
+var bankSync = app.Services.BuildJob<BankSyncJob>(TimeSpan.FromHours(1));
 
 app.Run();
+
+Console.WriteLine("Shutting down; please wait.");
+bankSync.Stop().Wait();
+Console.WriteLine("Shutdown complete.");

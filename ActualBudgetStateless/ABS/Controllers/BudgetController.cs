@@ -1,11 +1,11 @@
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using ABS.ActualWrapper;
-using ABS.Configuration;
+using ABS.ActualWrapper.Data;
 using static ABS.Mapper.Mapper;
+using static ABS.Configuration.Constants.Session;
 
 namespace ABS.Controllers;
-using static ABS.Configuration.Constants.Session;
 
 public class BudgetController(Actual actual) : Controller
 {
@@ -58,6 +58,7 @@ public class BudgetController(Actual actual) : Controller
         }
 
         mapped.Uncategorized = await uncategorizedTask;
+        mapped.Overspent = Overspent(summary.CategoryGroups?.SelectMany(cg => cg.Categories));
 
         return View(mapped);
     }
@@ -99,6 +100,27 @@ public class BudgetController(Actual actual) : Controller
             return sb.ToString();
         }
 
+        return null;
+    }
+
+    private string? Overspent(IEnumerable<Category>? categories)
+    {
+        var overspent = categories
+            ?.Where(c => c is { Hidden: false, Is_Income: false, Carryover: false })
+            .Where(c => c.Balance < 0)
+            .ToArray();
+        if (overspent?.Any() == true)
+        {
+            var sb = new StringBuilder("You have ");
+            sb.Append(overspent.Length);
+            sb.Append(" overspent ");
+            sb.Append(overspent.Length > 1 ? "categories" : "category");
+            sb.Append(" (");
+            sb.Append(ToDollars(overspent.Sum(c => c.Balance)));
+            sb.Append(").");
+            return sb.ToString();
+        }
+        
         return null;
     }
     

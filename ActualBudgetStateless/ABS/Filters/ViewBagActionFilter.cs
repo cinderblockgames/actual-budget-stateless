@@ -11,6 +11,8 @@ public class ViewBagActionFilter(EnvironmentVariables env) : IActionFilter
         if (context.Controller is Controller controller)
         {
             controller.ViewBag.ActualLinkUrl = env.ActualLinkUrl;
+            controller.ViewBag.CustomCssPath = env.CustomCssPath;
+            controller.ViewBag.CustomJavascriptPath = env.CustomJavascriptPath;
         }
     }
 
