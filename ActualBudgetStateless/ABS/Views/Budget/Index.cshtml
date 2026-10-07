@@ -6,21 +6,21 @@
 
 @if (Model.Uncategorized != null)
 {
-    <div class="alert alert-warning" role="alert">
+    <div class="alert alert-warning" role="alert" aria-label="Uncategorized banner">
         <a class="alert-link" asp-area="" asp-controller="Transactions" asp-action="Uncategorized">@Model.Uncategorized</a>
     </div>
 }
 
 @if (Model.Overspent != null)
 {
-    <div class="alert alert-danger" role="alert">
+    <div class="alert alert-danger" role="alert" aria-label="Overspent banner">
         @Model.Overspent
     </div>
 }
 
 @if (Model.Overbudgeted)
 {
-    <div class="alert alert-danger" role="alert">
+    <div class="alert alert-danger" role="alert" aria-label="Overbudgeted banner">
         You have budgeted more than your available funds.
     </div>
 }
