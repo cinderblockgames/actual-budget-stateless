@@ -15,7 +15,7 @@ public class BudgetFileSelectActionFilter(EnvironmentVariables env) : IActionFil
             if (!context.HttpContext.Session.Keys.Contains(Keys.BudgetFile))
             {
                 context.Result = new RedirectToRouteResult(
-                    new RouteValueDictionary(new { controller = "SwitchBudget", action = "Index" })
+                    new RouteValueDictionary(new { controller = "Home", action = "Index" })
                 );
             }
         }
