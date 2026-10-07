@@ -19,7 +19,7 @@
             month = [yyyy, mm].join("-");
             localStorage.setItem("month-@ViewBag.BudgetId", month);
         }
-        alert("@Url.ActionLink("Index", "Budget")");
+        alert("@Url.Action("Index", "Budget")");
         window.location.href = ["@Url.ActionLink("Index", "Budget")", ...month.split("-")].join("/");
     </script>
 }
