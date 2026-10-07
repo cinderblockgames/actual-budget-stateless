@@ -7,9 +7,9 @@
     <script type="text/javascript">
         const budget = localStorage.getItem("budget");
         if (!budget) {
-            window.location.href = "switchbudget";
+            window.location = "switchbudget";
         } else {
-            window.location.href = "switchbudget/setbudgetfile/" + budget;
+            window.location = "switchbudget/setbudgetfile/" + budget;
         }
     </script>
 }
