@@ -1,7 +1,11 @@
 using ABS.Configuration;
 using ABS.Jobs;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Load mounted assets.
+StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>
