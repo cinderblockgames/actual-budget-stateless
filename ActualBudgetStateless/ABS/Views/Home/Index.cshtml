@@ -6,10 +6,11 @@
 {
     <script type="text/javascript">
         const budget = localStorage.getItem("budget");
+        alert(window.location.href);
         if (!budget) {
-            window.location = "switchbudget";
+            window.location.href = "switchbudget";
         } else {
-            window.location = "switchbudget/setbudgetfile/" + budget;
+            window.location.href = "switchbudget/setbudgetfile/" + budget;
         }
     </script>
 }
