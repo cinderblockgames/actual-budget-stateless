@@ -4,9 +4,6 @@ using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load mounted assets.
-StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
-
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>
 {
@@ -52,6 +49,9 @@ app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+// Serve files from wwwroot.
+app.UseStaticFiles();
 
 // Bank sync every hour (if enabled).
 var bankSync = app.Services.BuildJob<BankSyncJob>(TimeSpan.FromHours(1));
