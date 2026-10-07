@@ -6,16 +6,21 @@ public class EnvironmentVariables
     public string ApiKey { get; }
     public string? ActualLinkUrl { get; }
     public Guid[] BankSyncBudgetIds { get; }
+    public string? CustomCssPath { get; }
+    public string? CustomJavascriptPath { get; }
 
     private EnvironmentVariables(
         string apiUrl, string apiKey,
         string? actualLinkUrl,
-        Guid[] bankSyncBudgetIds)
+        Guid[] bankSyncBudgetIds,
+        string? customCssPath, string? customJavascriptPath)
     {
         ApiUrl = apiUrl;
         ApiKey = apiKey;
         ActualLinkUrl = actualLinkUrl;
         BankSyncBudgetIds = bankSyncBudgetIds;
+        CustomCssPath = customCssPath;
+        CustomJavascriptPath = customJavascriptPath;
     }
 
     public static EnvironmentVariables Build()
@@ -51,11 +56,16 @@ public class EnvironmentVariables
         var bankSyncBudgetIds = env["BANK_SYNC_BUDGET_IDS"] as string;
         
         var actualLinkUrl = env["ACTUAL_LINK_URL"] as string;
+        
+        var customCssPath = env["CUSTOM_CSS_PATH"] as string;
+        
+        var customJavascriptPath = env["CUSTOM_JAVASCRIPT_PATH"] as string;
 
         return new EnvironmentVariables(
             apiUrl, apiKey,
             actualLinkUrl,
-            ToGuidArray(bankSyncBudgetIds));
+            ToGuidArray(bankSyncBudgetIds),
+            customCssPath, customJavascriptPath);
     }
 
     private static Guid[] ToGuidArray(string? value)
